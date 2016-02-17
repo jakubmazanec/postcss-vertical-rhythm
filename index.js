@@ -27,8 +27,16 @@ var calcLineHeight = function (fontProps) {
   var fontSize = fontProps[1];
   var fontUnit = fontProps[2];
   var lineHeight = fontProps[3];
+  var lineHeightUnit = fontProps[4];
+  var result;
+  
+  if (lineHeightUnit) {
+    var result = toPx(lineHeight, lineHeightUnit);
+  } else {
+    var result = toPx(fontSize, fontUnit) * lineHeight;
+  }
 
-  return toPx(fontSize, fontUnit) * lineHeight;
+  return result;
 };
 
 /**
@@ -37,10 +45,9 @@ var calcLineHeight = function (fontProps) {
  * @return {Array}
  */
 var getProps = function (decl) {
-
-  // Matches {$1:font-size}{$2:unit}/{$3:line-height}.
-  var fontProps = decl.value.match(/(\d+|\d+?\.\d+)(r?em|px|%)(?:\s*\/\s*)(\d+|\d+?\.\d+)\s+/);
-
+  // Matches {$1:font-size}{$2:unit}/{$3:line-height}{$4:unit}.
+  var fontProps = decl.value.match(/(\d*\.?\d*)(r?em|px|%)(?:\s*\/\s*)(\d*\.?\d*)(r?em|px|%)*/);
+  
   // Make sure font delcaration is valid.
   if (!fontProps) {
     throw decl.error('Font declaration is invalid.');
@@ -62,8 +69,8 @@ var getRhythmValue = function (declValue, rhythmValue) {
 
 module.exports = postcss.plugin('postcss-vertical-rhythm', function (opts) {
   opts = opts || {};
-  var rootSelector = opts.rootSelector || 'body';
-  var rhythmUnit = 'vr';
+  var rootSelector = opts.rootSelector || 'html';
+  var rhythmUnit = opts.unit ||  'vr';
   var rhythmValue;
 
   return function (css) {
