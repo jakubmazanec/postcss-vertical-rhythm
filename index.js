@@ -71,13 +71,13 @@ module.exports = postcss.plugin('postcss-vertical-rhythm', function (opts) {
   opts = opts || {};
   var rootSelector = opts.rootSelector || 'html';
   var rhythmUnit = opts.unit ||  'vr';
-  var rhythmValue;
+  var rhythmValue = opts.baselineHeight;
 
   return function (css) {
     css.walkDecls(function transformDecl (decl) {
 
       // Check for root font-size.
-      if (decl.parent.selector === rootSelector) {
+      if (decl.parent.selector === rootSelector && typeof rhythmValue !== 'number') {
         if (decl.prop === 'font') {
           var props = getProps(decl);
 
