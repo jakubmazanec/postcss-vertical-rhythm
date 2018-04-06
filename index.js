@@ -62,7 +62,11 @@ var getProps = function (decl) {
  * @return {Number}
  */
 var getRhythmValue = function (declValue, rhythmValue) {
-  var val = parseFloat(declValue) || 1;
+  var val = parseFloat(declValue);
+  
+  if (!val && val !== 0) {
+    val = 1;
+  }
 
   return rhythmValue * val;
 };
